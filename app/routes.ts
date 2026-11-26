@@ -48,6 +48,8 @@ export default [
     route("team", "routes/team.tsx"),
     route("redeem/:code", "routes/redeem.$code.tsx"),
   ]),
+  // PROTOTYPE — Knock spike (#35), throwaway branch only
+  route("prototype/knock", "routes/prototype.knock.tsx"),
   route("signup", "routes/signup.tsx"),
   route("login", "routes/login.tsx"),
   route("api/switch-user", "routes/api.switch-user.ts"),
