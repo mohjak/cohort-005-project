@@ -211,6 +211,10 @@ function VariantA_Bell({ feed }: { feed: Feed }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const openEntry = useOpenEntry(feed, () => setOpen(false));
+  const [filter, setFilter] = useState<"all" | "unread" | "read">("all");
+  const filtered = feed.entries.filter((e) =>
+    filter === "all" ? true : filter === "unread" ? !e.read_at : !!e.read_at
+  );
 
   // Opening the popover marks everything seen → the badge clears; unread dots stay.
   useEffect(() => {
@@ -243,8 +247,18 @@ function VariantA_Bell({ feed }: { feed: Feed }) {
       </button>
       {open && (
         <div className="absolute left-0 top-10 z-50 w-96 overflow-hidden rounded-lg border bg-popover text-popover-foreground shadow-xl">
-          <div className="flex items-center justify-between border-b px-4 py-2.5">
+          <div className="flex items-center gap-2 border-b px-4 py-2.5">
             <span className="text-sm font-semibold">Notifications</span>
+            <select
+              value={filter}
+              onChange={(ev) => setFilter(ev.target.value as typeof filter)}
+              className="rounded border bg-background px-1.5 py-0.5 text-xs"
+            >
+              <option value="all">All</option>
+              <option value="unread">Unread</option>
+              <option value="read">Read</option>
+            </select>
+            <span className="flex-1" />
             {feed.unread > 0 && (
               <button
                 className="text-xs text-primary hover:underline"
@@ -255,8 +269,8 @@ function VariantA_Bell({ feed }: { feed: Feed }) {
             )}
           </div>
           <div className="max-h-[28rem] overflow-y-auto">
-            {feed.entries.length === 0 && <Empty />}
-            {feed.entries.slice(0, 15).map((e) => {
+            {filtered.length === 0 && <Empty />}
+            {filtered.slice(0, 15).map((e) => {
               const n = describe(e);
               return (
                 <button
